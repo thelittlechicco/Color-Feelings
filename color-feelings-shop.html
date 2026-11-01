@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#8e6bd9"><title>Color & Feelings Shop</title>
+<style>
+:root{--bg:#fffaf2;--ink:#3c3350;--purple:#8e6bd9;--sun:#ffd23f;font-family:'Arial Rounded MT Bold','Trebuchet MS',Arial,sans-serif;color:var(--ink)}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);min-height:100vh;padding-bottom:36px;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;border:0}button:focus-visible{outline:5px solid #ff6b35;outline-offset:3px}button:disabled{opacity:.5;cursor:default}
+.rainbow{height:14px;background:linear-gradient(90deg,#e63946 0 17%,#ff9a2e 17% 34%,#ffd23f 34% 51%,#4cc16a 51% 68%,#2f6fe0 68% 85%,#9b59d0 85%)}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;max-width:900px;margin:auto}.logo{font-size:24px;margin:0}.bar{display:flex;gap:10px}.pill{background:#fff;border-radius:40px;min-width:60px;height:60px;font-size:24px;padding:0 16px;box-shadow:0 4px 0 #0001}
+main{max-width:900px;margin:auto;padding:0 18px;text-align:center}.hero{font-size:84px;line-height:1;margin:0}.say{font-size:22px;margin:10px auto 20px;background:#fff;display:inline-block;padding:12px 22px;border-radius:30px}
+.shelves{display:grid;gap:14px}.lv{display:flex;align-items:center;gap:16px;background:#fff;border-radius:28px;padding:14px 22px 14px 14px;text-align:left;font-size:25px;min-height:98px;box-shadow:0 6px 0 #0001;border:5px solid #eadfff}
+.lv .ic{width:68px;height:68px;border-radius:50%;background:#f1e8ff;display:grid;place-items:center;font-size:40px;flex:none}.lv small{display:block;font-size:20px;margin-top:4px}
+.top{display:flex;justify-content:space-between;align-items:center;margin:6px 0}.back{background:#fff;border-radius:40px;height:54px;padding:0 18px;font-size:19px}
+.order{display:flex;align-items:center;gap:14px;justify-content:center;background:#fff;border-radius:30px;padding:12px 18px;margin:12px 0;font-size:24px;box-shadow:0 5px 0 #0001}.sw{width:64px;height:64px;border-radius:50%;border:5px solid #fff;box-shadow:0 0 0 3px #3c335033;flex:none}.hear{background:var(--sun);border-radius:50%;width:54px;height:54px;font-size:22px;flex:none}
+.bowl{position:relative;width:min(56vw,210px);height:min(56vw,210px);margin:10px auto;border-radius:50%;background:#fff;border:10px solid #eadfff;overflow:hidden;box-shadow:0 8px 0 #0001}.bowl i{position:absolute;inset:0;transition:background .4s}.bowl.swirl i{animation:spin 1s linear}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pots{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:14px 0}.pot{width:min(26vw,96px);height:min(26vw,96px);border-radius:26px;box-shadow:0 7px 0 #0003,inset 0 -10px 0 #0002;border:4px solid #fff;transition:transform .15s}.pot:active{transform:scale(.92)}.glow{box-shadow:0 0 0 8px var(--sun),0 7px 0 #0003}
+.face{font-size:min(36vw,160px);line-height:1.1;margin:6px 0}.story{background:#fff;border-radius:26px;padding:16px 20px;font-size:22px;line-height:1.4;margin:12px 0}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.opt{background:#fff;border-radius:26px;padding:14px 4px;box-shadow:0 7px 0 #0002;font-size:min(5vw,24px);border:5px solid #eadfff}.opt b{display:block;font-size:min(15vw,70px);font-weight:400;line-height:1.1}
+.msg{font-size:21px;min-height:56px;margin:8px 0}.cta{background:#3fbf8a;color:#fff;border-radius:44px;height:74px;padding:0 40px;font-size:28px;box-shadow:0 6px 0 #2a9468;margin:6px 0}
+.shake{animation:shake .45s}.pop{animation:pop .6s}@keyframes shake{25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}@keyframes pop{40%{transform:scale(1.15)}}
+.fly{position:fixed;top:-60px;font-size:40px;pointer-events:none;animation:fall 2.2s linear forwards;z-index:9}@keyframes fall{to{transform:translateY(115vh) rotate(360deg)}}
+dialog{border:0;border-radius:30px;padding:26px;max-width:440px;font-size:17px;line-height:1.6}dialog::backdrop{background:#0006}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="rainbow"></div>
+<header><h1 class="logo">🎨 Color &amp; Feelings</h1><div class="bar"><button class="pill" id="snd" aria-label="Sound on or off">🔊</button><button class="pill" id="adult" aria-label="For grown-ups">?</button></div></header>
+<main id="app"></main>
+<dialog id="dlg"><div id="dbody"></div><button class="back" onclick="dlg.close()">Close</button></dialog>
+<script>
+'use strict';
+const POTS=[['red','#e63946'],['yellow','#ffd23f'],['blue','#2f6fe0'],['white','#ffffff'],['black','#2b2b3a']];
+const MIX={'red+yellow':['orange','#ff9a2e'],'blue+red':['purple','#9b59d0'],'blue+yellow':['green','#4cc16a'],'red+white':['pink','#ff9fb8'],'blue+white':['light blue','#8fd0ff'],'white+yellow':['cream','#fff2a8'],'black+white':['grey','#9a9a9a'],'black+red':['dark red','#8a1f2b'],'black+blue':['navy','#1f3a7a'],'black+yellow':['olive','#8a8a1f']};
+const HEX={};for(const k in MIX)HEX[MIX[k][0]]=[MIX[k][1],k.split('+')];
+const FEEL={happy:['😄','happy'],sad:['😢','sad'],angry:['😠','angry'],scared:['😨','scared'],surprised:['😲','surprised'],sleepy:['😴','sleepy'],excited:['🤩','excited'],loved:['🥰','loved']};
+const STORIES=[['Your friend gives you a present!','happy'],['Your ice cream falls on the ground.','sad'],['Someone knocks down your tower.','angry'],['A big dog barks very loudly!','scared'],['It is a surprise party!','surprised'],['It is bedtime and your eyes feel heavy.','sleepy'],['You win the game!','excited'],['Mom gives you a big hug.','loved'],['Your best friend is moving away.','sad'],['You hear thunder in the dark.','scared']];
+const LV=[{t:'Mix Colors',e:'🎨',k:'mix',o:['orange','green','purple','orange','purple'],p:3},{t:'Light & Dark',e:'🖌️',k:'mix',o:['pink','light blue','cream','grey','navy'],p:5},{t:'Name the Feeling',e:'😊',k:'face'},{t:'How Would You Feel?',e:'💛',k:'story'}];
+const app=document.getElementById('app'),dlg=document.getElementById('dlg'),$=id=>document.getElementById(id);
+let done={},snd=true,L,ord,oi,o,pick,wrong,ok,busy;
+try{done=JSON.parse(localStorage.getItem('colorShop.v1'))||{}}catch(e){}
+const save=()=>{try{localStorage.setItem('colorShop.v1',JSON.stringify(done))}catch(e){}};
+const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+function say(t,retry){if(!snd||!window.speechSynthesis)return;try{speechSynthesis.cancel();setTimeout(()=>{try{const u=new SpeechSynthesisUtterance(t);u.lang='en-US';const pv=retry?null:pickVoice();if(pv)u.voice=pv;u.rate=.85;u.pitch=pv&&PREF.test(pv.name)&&!MALE.test(pv.name)?1.05:1.25;u.onerror=e=>{if(!retry&&e.error!=='canceled'&&e.error!=='interrupted')say(t,true)};speechSynthesis.speak(u)}catch(e){}},60)}catch(e){}}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;for(let n=0;n<14;n++){const f=document.createElement('div');f.className='fly';f.textContent=['🎨','⭐','🌈','✨','💛'][n%5];f.style.left=Math.random()*95+'%';f.style.animationDelay=Math.random()*.6+'s';document.body.append(f);setTimeout(()=>f.remove(),3000)}}
+function home(){window.speechSynthesis&&speechSynthesis.cancel();const all=LV.every((_,i)=>(done[i]||0)>=5);
+app.innerHTML=`<div class="hero">${all?'🏆':'🧑‍🎨'}</div><div class="say">${all?'You are a Color Star!':'Pick a shelf!'}</div><div class="shelves">${LV.map((v,i)=>`<button class="lv" data-i="${i}" aria-label="${v.t}, ${done[i]||0} of 5"><span class="ic">${v.e}</span><span>${v.t}<small>${'⭐'.repeat(done[i]||0)}${'☆'.repeat(5-(done[i]||0))}</small></span></button>`).join('')}</div>`;
+app.onclick=e=>{const b=e.target.closest('[data-i]');if(b)start(+b.dataset.i)}}
+function start(i){L=i;oi=0;const v=LV[i];ord=v.k==='mix'?shuffle(v.o):v.k==='face'?shuffle(Object.keys(FEEL)).slice(0,5):shuffle(STORIES).slice(0,5);round()}
+const head=()=>`<div class="top"><button class="back" id="bk" aria-label="Back to shelves">🏠 Shelves</button><span style="font-size:22px">${'⭐'.repeat(oi)}${'☆'.repeat(5-oi)}</span></div>`;
+function round(){const v=LV[L];o=ord[oi];wrong=0;ok=false;busy=false;pick=[];
+if(v.k==='mix'){const[hx,pair]=HEX[o],txt=`Please make ${o}!`;
+app.innerHTML=`${head()}<div class="order"><span class="sw" style="background:${hx}"></span><span>Make <b>${o}</b></span><button class="hear" id="hear" aria-label="Hear it again">🔊</button></div><div class="bowl" id="bowl" aria-label="Mixing bowl"><i></i></div><div class="msg" id="msg">Tap two paints to mix them.</div><div class="pots" id="pots">${POTS.slice(0,v.p).map((p,i)=>`<button class="pot" data-p="${p[0]}" style="background:${p[1]}" aria-label="${p[0]} paint"></button>`).join('')}</div><div id="nx"></div>`;
+$('bk').onclick=home;$('hear').onclick=()=>say(txt);setTimeout(()=>say(txt),250);
+app.onclick=e=>{const b=e.target.closest('.pot');if(!b||ok||busy)return;const n=b.dataset.p;if(pick.includes(n))return;pick.push(n);say(n);const bw=$('bowl').firstChild,col=n=>POTS.find(p=>p[0]===n)[1];
+if(pick.length===1){bw.style.background=col(n);return}
+busy=true;bw.style.background=`conic-gradient(${col(pick[0])},${col(pick[1])},${col(pick[0])})`;$('bowl').classList.add('swirl');
+setTimeout(()=>{$('bowl').classList.remove('swirl');const r=MIX[[...pick].sort().join('+')];bw.style.background=r[1];
+if(r[0]===o)win($('bowl'),`Yes! ${pick.join(' and ')} make ${o}!`);
+else{wrong++;$('msg').textContent=`That makes ${r[0]}. We need ${o}!`;say(`That makes ${r[0]}. We need ${o}. Try again.`);if(wrong>=2)pair.forEach(x=>document.querySelector(`[data-p="${x}"]`).classList.add('glow'));setTimeout(()=>{if(ok)return;pick=[];busy=false;bw.style.background='#fff'},2200)}},1000)}}
+else{const f=v.k==='face',t=f?FEEL[o]:FEEL[o[1]],txt=f?'How does this face feel?':o[0],opts=shuffle([t[1],...shuffle(Object.keys(FEEL).filter(k=>FEEL[k][1]!==t[1])).slice(0,2).map(k=>FEEL[k][1])]);
+app.innerHTML=`${head()}${f?`<div class="face" aria-label="A ${t[1]} face">${t[0]}</div>`:`<div class="story">${txt}</div>`}<div class="msg" id="msg">${f?'How does this face feel?':'How would you feel?'}</div><div class="opts" id="opts">${opts.map(w=>f?`<button class="opt" data-w="${w}">${w}</button>`:`<button class="opt" data-w="${w}" aria-label="${w}"><b>${Object.values(FEEL).find(x=>x[1]===w)[0]}</b>${w}</button>`).join('')}</div><button class="pill" id="hear" aria-label="Hear it again">🔊</button><div id="nx"></div>`;
+$('bk').onclick=home;$('hear').onclick=()=>say(txt);setTimeout(()=>say(txt),250);
+app.onclick=e=>{const b=e.target.closest('.opt');if(!b||ok)return;if(b.dataset.w===t[1]){b.classList.add('pop');win(b,`Yes! ${t[1]}! It is okay to feel ${t[1]}.`)}else{wrong++;b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');$('msg').textContent='Hmm, try again!';say('Hmm, try again.');if(wrong>=2)document.querySelector(`[data-w="${t[1]}"]`).style.borderColor='#ffd23f'}}}}
+function win(el,t){ok=true;confetti();el.classList.add('pop');$('msg').textContent=t+' 🎉';say(t);done[L]=Math.max(done[L]||0,oi+1);save();
+$('nx').innerHTML=`<button class="cta" id="go">${oi<4?'Next ➜':'Finish 🏅'}</button>`;$('go').focus();$('go').onclick=()=>{oi++;oi<5?round():finish()}}
+function finish(){confetti();say('Hooray! You finished the shelf!');app.innerHTML=`<div class="hero">🏅</div><div class="say">Hooray! Shelf complete!</div><p style="font-size:56px;margin:6px">${LV[L].e}⭐</p><button class="cta" id="h">Back to shelves</button>`;$('h').onclick=home}
+$('adult').onclick=()=>{$('dbody').innerHTML='<h2 style="margin-top:0">For grown-ups</h2><p>Color &amp; Feelings Shop introduces colour mixing (primary and light/dark mixes, with every combination named) and emotional vocabulary for ages 4–7. After each feeling the game says it is okay to feel that way. No timer, no losing, no ads, no links out. Voice uses your device\'s built-in speech.</p><p>Progress is saved on this device only. No accounts or personal data.</p>';voiceUI();dlg.showModal()};
+$('snd').onclick=()=>{snd=!snd;$('snd').textContent=snd?'🔊':'🔇';if(!snd&&window.speechSynthesis)speechSynthesis.cancel()};
+let voices=[],vname='';try{vname=localStorage.getItem('kidsVoice')||''}catch(e){}
+const PREF=/samantha|karen|moira|tessa|serena|aria|jenny|zira|susan|hazel|libby|sonia|google us english|google uk english female|female/i;
+const MALE=/daniel|alex|fred|david|mark|george|guy|ryan|james|thomas|rishi|arthur|oliver|male(?!.*female)/i;
+function loadVoices(){try{voices=(speechSynthesis.getVoices()||[]).filter(v=>/^en/i.test(v.lang))}catch(e){}}
+function pickVoice(){return voices.find(v=>v.name===vname)||voices.find(v=>PREF.test(v.name)&&!MALE.test(v.name))||voices.find(v=>!MALE.test(v.name))||voices[0]}
+function voiceUI(){loadVoices();const b=$('dbody');b.insertAdjacentHTML('beforeend',voices.length?'<p><label>Voice: <select id="vs">'+voices.map(v=>`<option value="${v.name}" ${v===pickVoice()?'selected':''}>${v.name}</option>`).join('')+'</select></label></p>':'<p>No English voice found on this device yet.</p>');b.insertAdjacentHTML('beforeend','<p><button class="back" id="tv">🔊 Test voice</button></p><p style="font-size:14px">No sound? Turn up the media volume, switch off silent mode, and check the device Text-to-speech settings (an English voice must be installed).</p>');$('tv').onclick=()=>say('Hello! Can you hear me?');if($('vs'))$('vs').onchange=e=>{vname=e.target.value;try{localStorage.setItem('kidsVoice',vname)}catch(_){}say('Hello! Can you hear me?')}}
+if(window.speechSynthesis){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+home();
+</script></body></html>
